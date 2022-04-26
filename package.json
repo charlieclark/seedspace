@@ -1,0 +1,32 @@
+{
+  "name": "typescript-webpack-game-starter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack-dev-server --mode=development --open",
+    "prod": "webpack --production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HarveyD/typescript-webpack-game-starter.git"
+  },
+  "author": "Harvey Delaney",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HarveyD/typescript-webpack-game-starter/issues"
+  },
+  "homepage": "https://github.com/HarveyD/typescript-webpack-game-starter#readme",
+  "devDependencies": {
+    "css-loader": "^6.7.1",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.5.0",
+    "style-loader": "^3.3.1",
+    "ts-loader": "^9.2.8",
+    "webpack": "^5.72.0",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.8.1",
+    "typescript": "^4.6.3"
+  }
+}
