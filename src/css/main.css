@@ -9,9 +9,25 @@ html, body {
 	align-items: center;
 	justify-content: center;
 	color: #333;
+	flex-direction: column;
 }
 
 canvas {
 	-webkit-tap-highlight-color: transparent;
 	outline: solid #333 3px;
+}
+
+input {
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+.buttons {
+	margin-top: 20px;
+	display: flex;
+	align-items: center;
+}
+
+.buttons button {
+	margin: 0 10px;
 }

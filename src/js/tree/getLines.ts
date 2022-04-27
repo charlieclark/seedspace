@@ -53,8 +53,8 @@ const circleToLines = (mid: Point, radius: number, sections: number) => {
   return lines;
 };
 
-const getLines = async (frameSize: Point): Promise<Line[][]> => {
-  seedrandom("charlie", { global: true });
+const getLines = async (frameSize: Point, seed: string): Promise<Line[][]> => {
+  seedrandom(seed, { global: true });
 
   const { random, shuffle } = runInContext();
 

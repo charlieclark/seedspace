@@ -35,10 +35,13 @@
   "dependencies": {
     "@types/eases": "^1.0.2",
     "@types/lodash": "^4.14.182",
+    "@types/random-words": "^1.1.2",
     "@types/seedrandom": "^3.0.2",
     "eases": "^1.0.8",
     "lodash": "^4.17.21",
     "p-series": "^3.0.0",
+    "qs": "^6.10.3",
+    "random-words": "^1.1.2",
     "seedrandom": "^3.0.5"
   }
 }

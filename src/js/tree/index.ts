@@ -2,42 +2,56 @@ import getLines from "./getLines";
 
 const WIDTH = 800;
 const HEIGHT = 800;
+const DOWNSCALE_FACTOR = 2;
 
-const tree = async (canvas: HTMLCanvasElement) => {
-  canvas.style.width = WIDTH / 2 + "px";
-  canvas.style.height = HEIGHT / 2 + "px";
+export const setupCanvas = (canvas: HTMLCanvasElement) => {
+  canvas.style.width = WIDTH / DOWNSCALE_FACTOR + "px";
+  canvas.style.height = HEIGHT / DOWNSCALE_FACTOR + "px";
 
-  // Set actual size in memory (scaled to account for extra pixel density).
-  var scale = window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+  const scale = window.devicePixelRatio;
   canvas.width = Math.floor(WIDTH * scale);
   canvas.height = Math.floor(HEIGHT * scale);
 
   const ctx = canvas.getContext("2d");
 
-  // Normalize coordinate system to use CSS pixels.
   ctx.scale(scale, scale);
 
-  const [branches, leaves] = await getLines([WIDTH, HEIGHT]);
-
-  console.log([...branches, ...leaves].length);
-
-  branches.forEach(async (line, index) => {
-    await new Promise((resolve) => setTimeout(resolve, 1));
-    ctx.beginPath();
-    ctx.strokeStyle = "#000000";
-    ctx.moveTo(line[0][0], line[0][1]);
-    ctx.lineTo(line[1][0], line[1][1]);
-    ctx.stroke();
-  });
-
-  leaves.forEach(async (line, index) => {
-    await new Promise((resolve) => setTimeout(resolve, 1));
-    ctx.beginPath();
-    ctx.strokeStyle = "#000000";
-    ctx.moveTo(line[0][0], line[0][1]);
-    ctx.lineTo(line[1][0], line[1][1]);
-    ctx.stroke();
-  });
+  return ctx;
 };
 
-export default tree;
+export const drawTree = (ctx: CanvasRenderingContext2D, seed: string) => {
+  let isCancelled = false;
+  ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+  setTimeout(async () => {
+    const [branches, leaves] = await getLines([WIDTH, HEIGHT], seed);
+
+    branches.forEach(async (line, index) => {
+      await new Promise((resolve) => setTimeout(resolve, 1));
+      if (isCancelled) {
+        return;
+      }
+      ctx.beginPath();
+      ctx.strokeStyle = "#000000";
+      ctx.moveTo(line[0][0], line[0][1]);
+      ctx.lineTo(line[1][0], line[1][1]);
+      ctx.stroke();
+    });
+
+    leaves.forEach(async (line, index) => {
+      await new Promise((resolve) => setTimeout(resolve, 1));
+      if (isCancelled) {
+        return;
+      }
+      ctx.beginPath();
+      ctx.strokeStyle = "#000000";
+      ctx.moveTo(line[0][0], line[0][1]);
+      ctx.lineTo(line[1][0], line[1][1]);
+      ctx.stroke();
+    });
+  }, 1);
+
+  return () => {
+    isCancelled = true;
+  };
+};
