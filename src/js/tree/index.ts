@@ -1,9 +1,5 @@
 import { Line } from "./types";
 
-const getLinesWorker = new Worker(
-  new URL("./getLinesWorker.ts", import.meta.url)
-);
-
 const WIDTH = 800;
 const HEIGHT = 800;
 const DOWNSCALE_FACTOR = 2;
@@ -28,6 +24,16 @@ type Data = {
 };
 
 export const drawTree = (ctx: CanvasRenderingContext2D, seed: string) => {
+  let finishLoading: () => void;
+
+  const loadingPromise = new Promise((resolve) => {
+    finishLoading = () => resolve(true);
+  });
+
+  const getLinesWorker = new Worker(
+    new URL("./getLinesWorker.ts", import.meta.url)
+  );
+
   let isCancelled = false;
   ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
@@ -37,6 +43,8 @@ export const drawTree = (ctx: CanvasRenderingContext2D, seed: string) => {
   });
 
   getLinesWorker.onmessage = ({ data: { lines } }: { data: Data }) => {
+    finishLoading();
+
     const [branches, leaves] = lines;
 
     branches.forEach(async (line, index) => {
@@ -64,7 +72,11 @@ export const drawTree = (ctx: CanvasRenderingContext2D, seed: string) => {
     });
   };
 
-  return () => {
-    isCancelled = true;
+  return {
+    loadingPromise: loadingPromise,
+    cancel: () => {
+      getLinesWorker.terminate();
+      isCancelled = true;
+    },
   };
 };

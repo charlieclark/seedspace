@@ -31,7 +31,11 @@ const init = () => {
 
   let currentCancel: () => void;
 
-  const setOrRandomizeSeed = (seed: string | null) => {
+  const toggleLoading = (isLoading: boolean) => {
+    document.body.classList.toggle("loading", isLoading);
+  };
+
+  const setOrRandomizeSeed = async (seed: string | null) => {
     seed = seed || randomWords();
 
     if (seed !== getSeedParam()) {
@@ -49,7 +53,15 @@ const init = () => {
       currentCancel();
     }
 
-    currentCancel = drawTree(ctx, seed as string);
+    const { cancel, loadingPromise } = drawTree(ctx, seed as string);
+
+    currentCancel = cancel;
+
+    toggleLoading(true);
+
+    await loadingPromise;
+
+    toggleLoading(false);
   };
 
   const clickHandlers = {

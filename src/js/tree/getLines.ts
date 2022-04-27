@@ -2,9 +2,6 @@ import { Line, Point, Rect } from "./types";
 import { runInContext, times } from "lodash";
 import * as eases from "eases";
 import seedrandom from "seedrandom";
-import pSeries from "p-series";
-
-const delay = (d: number) => new Promise((resolve) => setTimeout(resolve, d));
 
 export const p = (x: number, y: number): Point => {
   return [x, y];
