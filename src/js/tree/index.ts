@@ -1,4 +1,8 @@
-import getLines from "./getLines";
+import { Line } from "./types";
+
+const getLinesWorker = new Worker(
+  new URL("./getLinesWorker.ts", import.meta.url)
+);
 
 const WIDTH = 800;
 const HEIGHT = 800;
@@ -19,12 +23,21 @@ export const setupCanvas = (canvas: HTMLCanvasElement) => {
   return ctx;
 };
 
+type Data = {
+  lines: Line[][];
+};
+
 export const drawTree = (ctx: CanvasRenderingContext2D, seed: string) => {
   let isCancelled = false;
   ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-  setTimeout(async () => {
-    const [branches, leaves] = await getLines([WIDTH, HEIGHT], seed);
+  getLinesWorker.postMessage({
+    size: [WIDTH, HEIGHT],
+    seed,
+  });
+
+  getLinesWorker.onmessage = ({ data: { lines } }: { data: Data }) => {
+    const [branches, leaves] = lines;
 
     branches.forEach(async (line, index) => {
       await new Promise((resolve) => setTimeout(resolve, 1));
@@ -49,7 +62,7 @@ export const drawTree = (ctx: CanvasRenderingContext2D, seed: string) => {
       ctx.lineTo(line[1][0], line[1][1]);
       ctx.stroke();
     });
-  }, 1);
+  };
 
   return () => {
     isCancelled = true;

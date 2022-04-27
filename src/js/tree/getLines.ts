@@ -1,12 +1,12 @@
 import { Line, Point, Rect } from "./types";
 import { runInContext, times } from "lodash";
 import * as eases from "eases";
-import seedrandom = require("seedrandom");
+import seedrandom from "seedrandom";
 import pSeries from "p-series";
 
 const delay = (d: number) => new Promise((resolve) => setTimeout(resolve, d));
 
-const p = (x: number, y: number): Point => {
+export const p = (x: number, y: number): Point => {
   return [x, y];
 };
 
@@ -53,7 +53,7 @@ const circleToLines = (mid: Point, radius: number, sections: number) => {
   return lines;
 };
 
-const getLines = async (frameSize: Point, seed: string): Promise<Line[][]> => {
+const getLines = (frameSize: Point, seed: string): Line[][] => {
   seedrandom(seed, { global: true });
 
   const { random, shuffle } = runInContext();
@@ -72,13 +72,13 @@ const getLines = async (frameSize: Point, seed: string): Promise<Line[][]> => {
 
   const leaves: Point[] = [];
 
-  const branch = async (
+  const branch = (
     startPos: Point,
     distance: number,
     angle: number,
     cycle: number,
     startWidth: number
-  ): Promise<Line[]> => {
+  ): Line[] => {
     const isFirstCycle = cycle === 1;
 
     let segments: Line[] = [];
@@ -158,49 +158,40 @@ const getLines = async (frameSize: Point, seed: string): Promise<Line[][]> => {
 
     let childSegments: Line[] = [];
 
-    await pSeries(
-      shuffle(segments.map((segment, index) => ({ segment, index }))).map(
-        ({ segment, index }) =>
-          async () => {
-            {
-              const numSplits = isFirstCycle ? 2 : 1;
-              const branchChance = isFirstCycle ? 0.5 : 0.3;
+    shuffle(segments.map((segment, index) => ({ segment, index }))).map(
+      ({ segment, index }) => {
+        const numSplits = isFirstCycle ? 2 : 1;
+        const branchChance = isFirstCycle ? 0.5 : 0.3;
 
-              await pSeries(
-                times(numSplits).map(() => {
-                  return async () => {
-                    if (random() > branchChance && cycle < maxCycles) {
-                      splitCount++;
+        times(numSplits).map(() => {
+          if (random() > branchChance && cycle < maxCycles) {
+            splitCount++;
 
-                      const newAngle = isFirstCycle
-                        ? shuffle([random(200, 240), random(300, 340)])[0]
-                        : angle + random(-90, 90);
+            const newAngle = isFirstCycle
+              ? shuffle([random(200, 240), random(300, 340)])[0]
+              : angle + random(-90, 90);
 
-                      const baseDistance = isFirstCycle
-                        ? random(0.5, 0.6)
-                        : random(0.3, 0.7);
+            const baseDistance = isFirstCycle
+              ? random(0.5, 0.6)
+              : random(0.3, 0.7);
 
-                      const ease = isFirstCycle ? eases.quadIn : eases.linear;
+            const ease = isFirstCycle ? eases.quadIn : eases.linear;
 
-                      const ratio = (segments.length - index) / segments.length;
+            const ratio = (segments.length - index) / segments.length;
 
-                      const newSegments = await branch(
-                        segment[1],
-                        distance * baseDistance * ease(ratio),
-                        newAngle,
-                        cycle + 1,
-                        getWidthForSegmentIndex(index) * 0.5
-                      );
-                      if (newSegments) {
-                        childSegments = [...childSegments, ...newSegments];
-                      }
-                    }
-                  };
-                })
-              );
+            const newSegments = branch(
+              segment[1],
+              distance * baseDistance * ease(ratio),
+              newAngle,
+              cycle + 1,
+              getWidthForSegmentIndex(index) * 0.5
+            );
+            if (newSegments) {
+              childSegments = [...childSegments, ...newSegments];
             }
           }
-      )
+        });
+      }
     );
 
     let convertedSegments: Line[] = [];
@@ -254,7 +245,7 @@ const getLines = async (frameSize: Point, seed: string): Promise<Line[][]> => {
 
   // return [[treeStartPos, p(frameWidth / 2, 10)]];
 
-  const allBranches = await branch(
+  const allBranches = branch(
     treeStartPos,
     frameHeight * random(0.8, 0.9),
     random(260, 280),

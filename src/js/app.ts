@@ -1,9 +1,9 @@
 declare var require: any;
 require("../css/main.css");
 
-import qs = require("qs");
+import qs from "qs";
 import { setupCanvas, drawTree } from "./tree";
-import randomWords = require("random-words");
+import randomWords from "random-words";
 
 enum HandlerIds {
   randomize = "randomize",
