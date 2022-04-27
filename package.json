@@ -28,5 +28,11 @@
     "webpack-cli": "^4.9.2",
     "webpack-dev-server": "^4.8.1",
     "typescript": "^4.6.3"
+  },
+  "dependencies": {
+    "@types/seedrandom": "^3.0.2",
+    "eases": "^1.0.8",
+    "p-series": "^3.0.0",
+    "seedrandom": "^3.0.5"
   }
 }
