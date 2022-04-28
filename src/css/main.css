@@ -47,6 +47,7 @@ canvas {
 
 input {
   border: none;
+	border-radius: 0 !important;
   outline: none;
   background: none;
   margin-bottom: 30px;
