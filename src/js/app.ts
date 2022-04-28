@@ -119,7 +119,7 @@ const init = () => {
     [HandlerIds.about]: async () => {
       toggleModal(
         `
-        each seed grows a unique random tree
+        each seed gives a uniquely random tree
         <br/>
         –
         <br/>
