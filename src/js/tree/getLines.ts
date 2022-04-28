@@ -71,7 +71,7 @@ const getLines = (frameSize: Point, seed: string) => {
     frameHeight - frameBoundariesOffset * 2
   );
 
-  const initialStartWidth = random(s(30), s(60));
+  const initialStartWidth = random(s(30), s(70));
   const endWidth = 1;
 
   let segmentCount = 0;

@@ -97,7 +97,7 @@ const init = () => {
     [HandlerIds.share]: () => {
       const url = getLocationWithSeedParam(getSeedParam());
       if (navigator.share) {
-        navigator.share(url as ShareData);
+        navigator.share({ url });
       } else {
         toggleModal("copied link to clipboard", true);
         copy(url);

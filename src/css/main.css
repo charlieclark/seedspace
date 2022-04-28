@@ -43,7 +43,7 @@ canvas {
   border: solid 3px #333;
   max-width: 60vmin;
   max-height: 60vmin;
-	display: block;
+  display: block;
 }
 
 .loader {
@@ -83,10 +83,10 @@ input:hover {
 }
 
 a {
-  color: inherit !important;
+  color: inherit;
 }
 
-button {
+button[data-click] {
   border: none;
   outline: none;
   background: none;
@@ -94,6 +94,7 @@ button {
   margin: 0 10px;
   font-family: "Libre Baskerville", serif;
   transition: opacity 0.2s ease;
+  color: inherit;
 }
 
 button:hover {
@@ -140,8 +141,8 @@ body.modal-showing .modal {
   font-size: 12px;
   z-index: 3;
   line-height: 2em;
-  max-width: 400px;
-  width: 90%;
+  max-width: 360px;
+  width: 90vw;
 }
 
 .about {

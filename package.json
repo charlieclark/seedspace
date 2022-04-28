@@ -38,6 +38,7 @@
     "p-all": "^4.0.0",
     "qs": "^6.10.3",
     "random-words": "^1.1.2",
-    "seedrandom": "^3.0.5"
+    "seedrandom": "^3.0.5",
+    "share-api-polyfill": "^1.1.0"
   }
 }
