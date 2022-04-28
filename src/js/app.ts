@@ -8,7 +8,7 @@ import randomWords from "random-words";
 import canvasToImage from "canvas-to-image";
 import copy from "copy-to-clipboard";
 
-document.addEventListener("DOMContentLoaded", function () {
+window.addEventListener("load", () => {
   document.body.classList.add("ready");
 });
 
