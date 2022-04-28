@@ -4,11 +4,16 @@ require("../css/main.css");
 import qs from "qs";
 import { setupCanvas, drawTree } from "./tree";
 import randomWords from "random-words";
+// @ts-ignore
+import canvasToImage from "canvas-to-image";
+import copy from "copy-to-clipboard";
 
 enum HandlerIds {
   randomize = "randomize",
   share = "share",
   download = "download",
+  overlay = "overlay",
+  about = "about",
 }
 
 const getCurrentUrl = () => {
@@ -22,14 +27,31 @@ const getSeedParam = () => {
   return seed as string;
 };
 
+const getLocationWithSeedParam = (seed: string) => {
+  return getCurrentUrl() + qs.stringify({ seed }, { addQueryPrefix: true });
+};
+
 const getInputNode = () => {
   return document.body.querySelector("input");
 };
 
+const toggleModal = (text: string | null, autohide = false) => {
+  if (text) {
+    document.querySelector(".modal").innerHTML = text;
+  }
+  document.body.classList.toggle("modal-showing", !!text);
+
+  if (autohide) {
+    setTimeout(() => toggleModal(null), 3000);
+  }
+};
+
 const init = () => {
-  const ctx = setupCanvas(document.querySelector("canvas"));
+  const canvas = document.querySelector("canvas");
+  const ctx = setupCanvas(canvas);
 
   let currentCancel: () => void;
+  let currentFinish: () => void;
 
   const toggleLoading = (isLoading: boolean) => {
     document.body.classList.toggle("loading", isLoading);
@@ -39,8 +61,7 @@ const init = () => {
     seed = seed || randomWords();
 
     if (seed !== getSeedParam()) {
-      const newUrl =
-        getCurrentUrl() + qs.stringify({ seed }, { addQueryPrefix: true });
+      const newUrl = getLocationWithSeedParam(seed);
       console.log({ newUrl });
       history.replaceState(null, "", newUrl);
     }
@@ -53,9 +74,10 @@ const init = () => {
       currentCancel();
     }
 
-    const { cancel, loadingPromise } = drawTree(ctx, seed as string);
+    const { cancel, finish, loadingPromise } = drawTree(ctx, seed as string);
 
     currentCancel = cancel;
+    currentFinish = finish;
 
     toggleLoading(true);
 
@@ -69,10 +91,36 @@ const init = () => {
       setOrRandomizeSeed(null);
     },
     [HandlerIds.share]: () => {
-      console.log("share");
+      const url = getLocationWithSeedParam(getSeedParam());
+      if (navigator.share) {
+        navigator.share(url as ShareData);
+      } else {
+        toggleModal("copied link to clipboard", true);
+        copy(url);
+      }
     },
-    [HandlerIds.download]: () => {
-      console.log("download");
+    [HandlerIds.download]: async () => {
+      if (currentFinish) {
+        await currentFinish();
+      }
+      canvasToImage(canvas, {
+        name: `seedspace-${getSeedParam()}`,
+        type: "png",
+        quality: 1,
+      });
+    },
+    [HandlerIds.overlay]: async () => {
+      toggleModal(null);
+    },
+    [HandlerIds.about]: async () => {
+      toggleModal(
+        `
+        Each seed word results in a unique tree.
+        <br/>
+        –
+        <br/>
+        Built by <a target="_blank" href="http://www.builtby.cc">Charlie Clark</a> during a <a target="_blank" href="http://squarespace.com/">Squarespace</a> hackweek.`
+      );
     },
   };
 
@@ -92,7 +140,7 @@ const init = () => {
       e.preventDefault();
       const formData = new FormData(e.target);
       const { seed } = Object.fromEntries(formData);
-      setOrRandomizeSeed(seed as string);
+      setOrRandomizeSeed((seed as string).toLowerCase());
       getInputNode().blur();
     });
 

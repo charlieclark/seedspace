@@ -50,21 +50,30 @@ const circleToLines = (mid: Point, radius: number, sections: number) => {
   return lines;
 };
 
-const getLines = (frameSize: Point, seed: string): Line[][] => {
+const getLines = (frameSize: Point, seed: string) => {
   seedrandom(seed, { global: true });
-
-  const { random, shuffle } = runInContext();
-
-  const maxSegments = 10000;
-  const maxCycles = 6;
-  const initialStartWidth = random(30, 60);
-  const endWidth = 1;
 
   const [frameWidth, frameHeight] = frameSize;
   const treeStartPos = p(frameWidth / 2, frameHeight);
   const [treeStartX, treeStartY] = treeStartPos;
-  const frameRect = r(p(0, 0), frameWidth, frameHeight);
   const minSegmentSize = frameHeight * 0.01;
+  const maxSegments = 10000;
+  const maxCycles = 6;
+
+  const { random, shuffle } = runInContext();
+
+  const s = (v: number) => Math.ceil((frameWidth * v) / 800);
+
+  const frameBoundariesOffset = s(20);
+  const frameBoundariesRect = r(
+    p(frameBoundariesOffset, frameBoundariesOffset),
+    frameWidth - frameBoundariesOffset * 2,
+    frameHeight - frameBoundariesOffset * 2
+  );
+
+  const initialStartWidth = random(s(30), s(60));
+  const endWidth = 1;
+
   let segmentCount = 0;
 
   const leaves: Point[] = [];
@@ -91,7 +100,7 @@ const getLines = (frameSize: Point, seed: string): Line[][] => {
 
     const [endX, endY] = endPos;
 
-    if (!pointInRect(endPos, frameRect)) {
+    if (!pointInRect(endPos, frameBoundariesRect)) {
       return null;
     }
 
@@ -104,7 +113,10 @@ const getLines = (frameSize: Point, seed: string): Line[][] => {
         times(1).map(() => {
           if (random() > 0.5) {
             leaves.push(
-              p(curPos[0] + random(-10, 10), curPos[1] + random(-10, 10))
+              p(
+                curPos[0] + random(-s(10), s(10)),
+                curPos[1] + random(-s(10), s(10))
+              )
             );
           }
         });
@@ -149,10 +161,6 @@ const getLines = (frameSize: Point, seed: string): Line[][] => {
       return width1;
     };
 
-    // await delay(0);
-
-    let splitCount = 0;
-
     let childSegments: Line[] = [];
 
     shuffle(segments.map((segment, index) => ({ segment, index }))).map(
@@ -162,8 +170,6 @@ const getLines = (frameSize: Point, seed: string): Line[][] => {
 
         times(numSplits).map(() => {
           if (random() > branchChance && cycle < maxCycles) {
-            splitCount++;
-
             const newAngle = isFirstCycle
               ? shuffle([random(200, 240), random(300, 340)])[0]
               : angle + random(-90, 90);
@@ -210,52 +216,57 @@ const getLines = (frameSize: Point, seed: string): Line[][] => {
       const width1 = getWidthForSegmentIndex(index);
       const width2 = getWidthForSegmentIndex(index + 1);
 
-      const numSteps = Math.round((distance / frameWidth) * 170);
+      if (!width2) {
+        return;
+      }
+
+      const numSteps = Math.round((distance / frameWidth) * s(170));
 
       const circles = times(numSteps).map((index) => {
         const ratio = index / numSteps;
         const radius = width1 + (width2 - width1) * ratio;
         const newX = startX + (endX - startX) * ratio;
         const newY = startY + (endY - startY) * ratio;
-        return circleToLines(p(newX, newY), radius, 10);
+        const sections = Math.min(Math.max(5, Math.ceil(radius * 0.5)), 10);
+        return circleToLines(p(newX, newY), radius, sections);
       });
 
-      convertedSegments = [...convertedSegments, ...circles.flat(1)];
+      convertedSegments = [...convertedSegments, ...circles.flat()];
     });
-
-    // if (convertedSegments.length) {
-    //   const concavePoints: Point[] = concaveman(
-    //     convertedSegments.flat(1),
-    //     2.2
-    //   ).map(([x, y]) => p(x, y));
-
-    //   convertedSegments = concavePoints.map((p1, index) => {
-    //     const p2 = concavePoints[index + 1] || concavePoints[0];
-    //     return l(p1, p2);
-    //   });
-    //   console.log(convertedSegments);
-    //   const p1 = new Polygon(convertedSegments);
-    // }
 
     return [...convertedSegments, ...childSegments];
   };
 
-  // return [[treeStartPos, p(frameWidth / 2, 10)]];
-
   const allBranches = branch(
     treeStartPos,
-    frameHeight * random(0.8, 0.9),
+    frameHeight * random(0.85, 0.92),
     random(260, 280),
     1,
     initialStartWidth
   );
 
+  const outlineWidth = s(2);
+  const outlineLines = times(outlineWidth)
+    .map((o) => {
+      const [w, h] = frameSize;
+
+      return [
+        l(p(outlineWidth, o), p(w, o)),
+        l(p(w - o, outlineWidth), p(w - o, h)),
+        l(p(w - outlineWidth, h - o), p(0, h - o)),
+        l(p(o, h - outlineWidth), p(o, 0)),
+      ];
+    })
+    .flat();
+
   const leafLines = shuffle(leaves).reduce((acc, leafPos) => {
-    const circleLines = circleToLines(leafPos, random(1, 3, true), 5);
+    const radius = random(s(1), s(3), true);
+    const sections = radius === 1 ? 1 : 5;
+    const circleLines = circleToLines(leafPos, radius, sections);
     return [...acc, ...circleLines];
   }, []);
 
-  return [allBranches, leafLines];
+  return { outlineLines, allBranches, leafLines };
 };
 
 export default getLines;

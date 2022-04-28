@@ -1,7 +1,9 @@
+import exportFromJSON from "export-from-json";
+import pAll from "p-all";
 import { Line } from "./types";
 
-const WIDTH = 800;
-const HEIGHT = 800;
+const WIDTH = 1000;
+const HEIGHT = WIDTH;
 const DOWNSCALE_FACTOR = 2;
 
 export const setupCanvas = (canvas: HTMLCanvasElement) => {
@@ -20,14 +22,19 @@ export const setupCanvas = (canvas: HTMLCanvasElement) => {
 };
 
 type Data = {
-  lines: Line[][];
+  lines: { outlineLines: Line[]; allBranches: Line[]; leafLines: Line[] };
 };
 
 export const drawTree = (ctx: CanvasRenderingContext2D, seed: string) => {
   let finishLoading: () => void;
+  let finishDrawing: () => void;
 
   const loadingPromise = new Promise((resolve) => {
     finishLoading = () => resolve(true);
+  });
+
+  const drawingPromise = new Promise((resolve) => {
+    finishDrawing = () => resolve(true);
   });
 
   const getLinesWorker = new Worker(
@@ -35,41 +42,55 @@ export const drawTree = (ctx: CanvasRenderingContext2D, seed: string) => {
   );
 
   let isCancelled = false;
+  let isFinished = false;
+
   ctx.clearRect(0, 0, WIDTH, HEIGHT);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
   getLinesWorker.postMessage({
     size: [WIDTH, HEIGHT],
     seed,
   });
 
-  getLinesWorker.onmessage = ({ data: { lines } }: { data: Data }) => {
+  getLinesWorker.onmessage = async ({ data: { lines } }: { data: Data }) => {
     finishLoading();
 
-    const [branches, leaves] = lines;
+    const { outlineLines, allBranches, leafLines } = lines;
 
-    branches.forEach(async (line, index) => {
-      await new Promise((resolve) => setTimeout(resolve, 1));
-      if (isCancelled) {
-        return;
-      }
-      ctx.beginPath();
-      ctx.strokeStyle = "#000000";
-      ctx.moveTo(line[0][0], line[0][1]);
-      ctx.lineTo(line[1][0], line[1][1]);
-      ctx.stroke();
-    });
+    const drawLines = [allBranches, leafLines].flat();
+    const allLines = [outlineLines, drawLines].flat();
 
-    leaves.forEach(async (line, index) => {
-      await new Promise((resolve) => setTimeout(resolve, 1));
-      if (isCancelled) {
-        return;
-      }
-      ctx.beginPath();
-      ctx.strokeStyle = "#000000";
-      ctx.moveTo(line[0][0], line[0][1]);
-      ctx.lineTo(line[1][0], line[1][1]);
-      ctx.stroke();
-    });
+    console.info(`Line Count: ${allLines.length}`);
+
+    // @ts-ignore
+    window.__downloadJSON = () => {
+      exportFromJSON({
+        data: allLines,
+        fileName: `lines-${seed}`,
+        exportType: "json",
+      });
+    };
+
+    await pAll(
+      drawLines.map((line, index) => async () => {
+        if (isCancelled) {
+          return;
+        }
+        ctx.beginPath();
+        ctx.strokeStyle = "#000000";
+        ctx.moveTo(line[0][0], line[0][1]);
+        ctx.lineTo(line[1][0], line[1][1]);
+        ctx.stroke();
+
+        if (!isFinished) {
+          await new Promise((r) => setTimeout(r, 0));
+        }
+      }),
+      { concurrency: 500 }
+    );
+
+    finishDrawing();
   };
 
   return {
@@ -77,6 +98,10 @@ export const drawTree = (ctx: CanvasRenderingContext2D, seed: string) => {
     cancel: () => {
       getLinesWorker.terminate();
       isCancelled = true;
+    },
+    finish: async () => {
+      isFinished = true;
+      await drawingPromise;
     },
   };
 };

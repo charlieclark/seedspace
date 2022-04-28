@@ -1,5 +1,5 @@
 {
-  "name": "typescript-webpack-game-starter",
+  "name": "seedspace",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,18 +8,11 @@
     "dev": "webpack-dev-server --mode=development --open",
     "prod": "webpack --mode=production",
     "predeploy": "npm run prod",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist",
+    "penplot": "penplot ./penplot/index.js  --open"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/HarveyD/typescript-webpack-game-starter.git"
-  },
-  "author": "Harvey Delaney",
+  "author": "Charlie Clark",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/HarveyD/typescript-webpack-game-starter/issues"
-  },
-  "homepage": "https://github.com/HarveyD/typescript-webpack-game-starter#readme",
   "devDependencies": {
     "css-loader": "^6.7.1",
     "file-loader": "^6.2.0",
@@ -37,8 +30,12 @@
     "@types/lodash": "^4.14.182",
     "@types/random-words": "^1.1.2",
     "@types/seedrandom": "^3.0.2",
+    "canvas-to-image": "^2.2.0",
+    "copy-to-clipboard": "^3.3.1",
     "eases": "^1.0.8",
+    "export-from-json": "^1.6.0",
     "lodash": "^4.17.21",
+    "p-all": "^4.0.0",
     "qs": "^6.10.3",
     "random-words": "^1.1.2",
     "seedrandom": "^3.0.5"
