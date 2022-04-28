@@ -2,9 +2,11 @@ import exportFromJSON from "export-from-json";
 import pAll from "p-all";
 import { Line } from "./types";
 
-const WIDTH = 1000;
-const HEIGHT = WIDTH;
+const VIEW_WIDTH = 400;
 const DOWNSCALE_FACTOR = 2;
+
+const WIDTH = VIEW_WIDTH * DOWNSCALE_FACTOR;
+const HEIGHT = WIDTH;
 
 export const setupCanvas = (canvas: HTMLCanvasElement) => {
   canvas.style.width = WIDTH / DOWNSCALE_FACTOR + "px";

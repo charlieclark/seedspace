@@ -19,15 +19,15 @@ body {
 
 .canvasWrapper {
   position: relative;
-  padding: 40px;
+  padding: 30px;
   background: white;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 canvas {
   -webkit-tap-highlight-color: transparent;
-  border: solid 2px #333;
+  border: solid 3px #333;
   max-width: 60vmin;
   max-height: 60vmin;
 }
