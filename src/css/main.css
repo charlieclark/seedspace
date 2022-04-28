@@ -17,8 +17,17 @@ body {
   font-family: "Libre Baskerville", serif;
 }
 
+html {
+  box-sizing: border-box;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
 body.ready {
-	visibility: visible !important;
+  visibility: visible !important;
 }
 
 .canvasWrapper {
@@ -47,7 +56,7 @@ canvas {
 
 input {
   border: none;
-	border-radius: 0 !important;
+  border-radius: 0 !important;
   outline: none;
   background: none;
   margin-bottom: 30px;
