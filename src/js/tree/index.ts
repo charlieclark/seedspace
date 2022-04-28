@@ -86,10 +86,10 @@ export const drawTree = (ctx: CanvasRenderingContext2D, seed: string) => {
         ctx.stroke();
 
         if (!isFinished) {
-          await new Promise((r) => setTimeout(r, 0));
+          await new Promise((r) => setTimeout(r, 1));
         }
       }),
-      { concurrency: 500 }
+      { concurrency: 10 }
     );
 
     finishDrawing();
