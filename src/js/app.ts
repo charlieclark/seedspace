@@ -8,6 +8,10 @@ import randomWords from "random-words";
 import canvasToImage from "canvas-to-image";
 import copy from "copy-to-clipboard";
 
+document.addEventListener("DOMContentLoaded", function () {
+  document.body.classList.add("ready");
+});
+
 enum HandlerIds {
   randomize = "randomize",
   share = "share",
