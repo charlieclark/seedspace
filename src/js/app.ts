@@ -119,11 +119,13 @@ const init = () => {
     [HandlerIds.about]: async () => {
       toggleModal(
         `
-        Each seed word results in a unique tree.
+        each seed grows a unique random tree
         <br/>
         –
         <br/>
-        Built by <a target="_blank" href="http://www.builtby.cc">Charlie Clark</a> during a <a target="_blank" href="http://squarespace.com/">Squarespace</a> hackweek.`
+        built by <a target="_blank" href="http://www.builtby.cc">Charlie Clark</a>
+        <br/>
+        during a <a target="_blank" href="http://squarespace.com/">Squarespace</a> hackweek`
       );
     },
   };
