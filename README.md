@@ -1,2 +1,2 @@
-# typescript-webpack-game-starter
-A starterkit for creating a game using TypeScript, HTML5 Canvas and Webpack.
+# seedspace
+pen-plottable seeded random tree generator
