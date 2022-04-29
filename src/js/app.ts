@@ -62,7 +62,7 @@ const init = () => {
   };
 
   const setOrRandomizeSeed = async (seed: string | null) => {
-    seed = seed || randomWords();
+    seed = seed ? seed.trim().toLowerCase() : randomWords();
 
     if (seed !== getSeedParam()) {
       const newUrl = getLocationWithSeedParam(seed);
@@ -145,8 +145,8 @@ const init = () => {
     .addEventListener("submit", (e: Event & { target: HTMLFormElement }) => {
       e.preventDefault();
       const formData = new FormData(e.target);
-      const { seed } = Object.fromEntries(formData);
-      setOrRandomizeSeed((seed as string).toLowerCase());
+      const { seed = "" } = Object.fromEntries(formData);
+      setOrRandomizeSeed(seed as string);
       getInputNode().blur();
     });
 
