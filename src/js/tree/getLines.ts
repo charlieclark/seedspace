@@ -51,7 +51,7 @@ const circleToLines = (mid: Point, radius: number, sections: number) => {
 };
 
 const getLines = (frameSize: Point, seed: string) => {
-  seedrandom(seed, { global: true });
+  seedrandom(seed + '_seed', { global: true });
 
   const [frameWidth, frameHeight] = frameSize;
   const treeStartPos = p(frameWidth / 2, frameHeight);
@@ -245,7 +245,7 @@ const getLines = (frameSize: Point, seed: string) => {
     initialStartWidth
   );
 
-  const outlineWidth = s(2);
+  const outlineWidth = s(4);
   const outlineLines = times(outlineWidth)
     .map((o) => {
       const [w, h] = frameSize;

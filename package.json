@@ -9,7 +9,8 @@
     "prod": "webpack --mode=production",
     "predeploy": "npm run prod",
     "deploy": "gh-pages -d dist",
-    "penplot": "penplot ./penplot/index.js  --open"
+    "penplot:tree": "penplot ./penplot/tree.js  --open",
+    "penplot:bounds": "penplot ./penplot/bounds.js  --open"
   },
   "author": "Charlie Clark",
   "license": "ISC",

@@ -2,14 +2,17 @@ import { PaperSize, Orientation } from "penplot";
 import { polylinesToSVG } from "penplot/util/svg";
 import { clipPolylinesToBox } from "penplot/util/geom";
 
-import rawLines from "../generated/lines.json";
+import { optimizeOrder, mergeLines } from "./utils";
+
+import rawLines from "../generated/lines-2022.json";
 
 export const orientation = Orientation.LANDSCAPE;
-export const dimensions = [20, 20];
+export const dimensions = [11.4, 11.4];
 
-const margin = 1.5;
+const drawingSize = 7;
+const margin = (dimensions[0] - drawingSize) / 2;
 
-const RAW_DIM = [1000, 1000];
+const RAW_DIM = [800, 800];
 
 const scaleLines = (lines) => {
   const scale = (dimensions[0] - margin * 2) / RAW_DIM[0];
@@ -29,7 +32,7 @@ export default function createPlot(context, dimensions) {
   const box = [margin, margin, width - margin, height - margin];
   const scaledLines = scaleLines(rawLines);
   console.log(scaledLines);
-  const lines = clipPolylinesToBox(scaledLines, box);
+  const lines = optimizeOrder(mergeLines(clipPolylinesToBox(scaledLines, box)));
 
   return {
     draw,
