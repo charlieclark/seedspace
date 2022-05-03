@@ -133,7 +133,7 @@ body.modal-showing .modal {
   top: 50%;
   transform: translate(-50%, -50%);
   padding: 20px 30px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  box-shadow: rgba(100, 100, 111, 0.4) 0px 7px 29px 0px;
   border-radius: 3px;
   visibility: hidden;
   opacity: 0;
@@ -141,8 +141,10 @@ body.modal-showing .modal {
   font-size: 12px;
   z-index: 3;
   line-height: 2em;
-  max-width: 360px;
+  max-width: 600px;
   width: 90vw;
+  max-height: 60vh;
+  overflow: auto;
 }
 
 .about {
@@ -150,6 +152,13 @@ body.modal-showing .modal {
   z-index: 1;
   top: 20px;
   right: 20px;
+}
+
+.prints {
+  position: absolute;
+  z-index: 1;
+  top: 20px;
+  left: 20px;
 }
 
 @media only screen and (max-width: 1000px) {

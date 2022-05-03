@@ -18,6 +18,7 @@ enum HandlerIds {
   download = "download",
   overlay = "overlay",
   about = "about",
+  prints = "prints",
 }
 
 const getCurrentUrl = () => {
@@ -119,13 +120,29 @@ const init = () => {
     [HandlerIds.about]: async () => {
       toggleModal(
         `
-        each seed gives a uniquely random tree
+        pen-plottable seeded random tree generator
         <br/>
         –
         <br/>
         built by <a target="_blank" href="http://www.builtby.cc">Charlie Clark</a>
         <br/>
         during a <a target="_blank" href="http://squarespace.com/">Squarespace</a> hackweek`
+      );
+    },
+    [HandlerIds.prints]: async () => {
+      toggleModal(
+        `
+        a pen plotter can be used to draw the trees
+        <br/>
+        <br/>
+        <img style="width:100%;" src="https://raw.githubusercontent.com/charlieclark/seedspace/39cf6383c3bf50aa80620d805e5b0ee483743361/src/images/pen-plotter.gif" />
+        <br/>
+        <br/>
+        <a target="_blank" href="http://www.builtby.cc">Contact me</a> if you'd like one!
+        <br/>
+        <br/>
+        <img style="width:100%;" src="https://raw.githubusercontent.com/charlieclark/seedspace/39cf6383c3bf50aa80620d805e5b0ee483743361/src/images/drawing.jpg" />
+        `
       );
     },
   };
