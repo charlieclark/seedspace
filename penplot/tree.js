@@ -4,7 +4,7 @@ import { clipPolylinesToBox } from "penplot/util/geom";
 
 import { optimizeOrder, mergeLines } from "./utils";
 
-import rawLines from "../generated/lines-2022.json";
+import rawLines from "../generated/lines-scandy.json";
 
 export const orientation = Orientation.LANDSCAPE;
 export const dimensions = [11.4, 11.4];
