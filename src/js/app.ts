@@ -138,9 +138,6 @@ const init = () => {
         <img style="width:100%;" src="https://raw.githubusercontent.com/charlieclark/seedspace/39cf6383c3bf50aa80620d805e5b0ee483743361/src/images/pen-plotter.gif" />
         <br/>
         <br/>
-        <a target="_blank" href="http://www.builtby.cc">Contact me</a> if you'd like one!
-        <br/>
-        <br/>
         <img style="width:100%;" src="https://raw.githubusercontent.com/charlieclark/seedspace/39cf6383c3bf50aa80620d805e5b0ee483743361/src/images/drawing.jpg" />
         `
       );
